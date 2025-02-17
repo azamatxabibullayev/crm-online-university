@@ -1,7 +1,7 @@
 from django.shortcuts import render, redirect
 from django.http import HttpResponse, HttpResponseRedirect, JsonResponse
 from django.contrib import messages
-from django.core.files.storage import FileSystemStorage  # To upload Profile Picture
+from django.core.files.storage import FileSystemStorage
 from django.urls import reverse
 from django.views.decorators.csrf import csrf_exempt
 from django.core import serializers
@@ -18,7 +18,6 @@ def admin_home(request):
     course_count = Courses.objects.all().count()
     staff_count = Staffs.objects.all().count()
 
-    # Total Subjects and students in Each Course
     course_all = Courses.objects.all()
     course_name_list = []
     subject_count_list = []
@@ -40,7 +39,7 @@ def admin_home(request):
         subject_list.append(subject.subject_name)
         student_count_list_in_subject.append(student_count)
 
-    # For Saffs
+
     staff_attendance_present_list = []
     staff_attendance_leave_list = []
     staff_name_list = []
@@ -54,7 +53,7 @@ def admin_home(request):
         staff_attendance_leave_list.append(leaves)
         staff_name_list.append(staff.admin.first_name)
 
-    # For Students
+
     student_attendance_present_list = []
     student_attendance_leave_list = []
     student_name_list = []
@@ -146,7 +145,6 @@ def edit_staff_save(request):
         address = request.POST.get('address')
 
         try:
-            # INSERTING into Customuser Model
             user = CustomUser.objects.get(id=staff_id)
             user.first_name = first_name
             user.last_name = last_name
@@ -154,7 +152,6 @@ def edit_staff_save(request):
             user.username = username
             user.save()
 
-            # INSERTING into Staff Model
             staff_model = Staffs.objects.get(admin=staff_id)
             staff_model.address = address
             staff_model.save()
@@ -343,9 +340,6 @@ def add_student_save(request):
             course_id = form.cleaned_data['course_id']
             gender = form.cleaned_data['gender']
 
-            # Getting Profile Pic first
-            # First Check whether the file is selected or not
-            # Upload only if file is selected
             if len(request.FILES) != 0:
                 profile_pic = request.FILES['profile_pic']
                 fs = FileSystemStorage()
@@ -386,12 +380,10 @@ def manage_student(request):
 
 
 def edit_student(request, student_id):
-    # Adding Student ID into Session Variable
     request.session['student_id'] = student_id
 
     student = Students.objects.get(admin=student_id)
     form = EditStudentForm()
-    # Filling the form with Data from Database
     form.fields['email'].initial = student.admin.email
     form.fields['username'].initial = student.admin.username
     form.fields['first_name'].initial = student.admin.first_name
@@ -428,9 +420,6 @@ def edit_student_save(request):
             gender = form.cleaned_data['gender']
             session_year_id = form.cleaned_data['session_year_id']
 
-            # Getting Profile Pic first
-            # First Check whether the file is selected or not
-            # Upload only if file is selected
             if len(request.FILES) != 0:
                 profile_pic = request.FILES['profile_pic']
                 fs = FileSystemStorage()
@@ -440,7 +429,6 @@ def edit_student_save(request):
                 profile_pic_url = None
 
             try:
-                # First Update into Custom User Model
                 user = CustomUser.objects.get(id=student_id)
                 user.first_name = first_name
                 user.last_name = last_name
@@ -448,7 +436,7 @@ def edit_student_save(request):
                 user.username = username
                 user.save()
 
-                # Then Update Students Table
+
                 student_model = Students.objects.get(admin=student_id)
                 student_model.address = address
 
@@ -462,7 +450,6 @@ def edit_student_save(request):
                 if profile_pic_url != None:
                     student_model.profile_pic = profile_pic_url
                 student_model.save()
-                # Delete student_id SESSION after the data is updated
                 del request.session['student_id']
 
                 messages.success(request, "Student Updated Successfully!")
@@ -561,13 +548,12 @@ def edit_subject_save(request):
             subject.save()
 
             messages.success(request, "Subject Updated Successfully.")
-            # return redirect('/edit_subject/'+subject_id)
             return HttpResponseRedirect(reverse("edit_subject", kwargs={"subject_id": subject_id}))
 
         except:
             messages.error(request, "Failed to Update Subject.")
             return HttpResponseRedirect(reverse("edit_subject", kwargs={"subject_id": subject_id}))
-            # return redirect('/edit_subject/'+subject_id)
+
 
 
 def delete_subject(request, subject_id):
@@ -703,20 +689,18 @@ def admin_view_attendance(request):
 
 @csrf_exempt
 def admin_get_attendance_dates(request):
-    # Getting Values from Ajax POST 'Fetch Student'
+
     subject_id = request.POST.get("subject")
     session_year = request.POST.get("session_year_id")
 
-    # Students enroll to Course, Course has Subjects
-    # Getting all data from subject model based on subject_id
     subject_model = Subjects.objects.get(id=subject_id)
 
     session_model = SessionYearModel.objects.get(id=session_year)
 
-    # students = Students.objects.filter(course_id=subject_model.course_id, session_year_id=session_model)
+
     attendance = Attendance.objects.filter(subject_id=subject_model, session_year_id=session_model)
 
-    # Only Passing Student Id and Student Name Only
+
     list_data = []
 
     for attendance_single in attendance:
@@ -729,12 +713,10 @@ def admin_get_attendance_dates(request):
 
 @csrf_exempt
 def admin_get_attendance_student(request):
-    # Getting Values from Ajax POST 'Fetch Student'
     attendance_date = request.POST.get('attendance_date')
     attendance = Attendance.objects.get(id=attendance_date)
 
     attendance_data = AttendanceReport.objects.filter(attendance_id=attendance)
-    # Only Passing Student Id and Student Name Only
     list_data = []
 
     for student in attendance_data:

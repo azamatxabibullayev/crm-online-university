@@ -62,7 +62,6 @@ class EditStudentForm(forms.Form):
     username = forms.CharField(label="Username", max_length=50, widget=forms.TextInput(attrs={"class": "form-control"}))
     address = forms.CharField(label="Address", max_length=50, widget=forms.TextInput(attrs={"class": "form-control"}))
 
-    # For Displaying Courses
     try:
         courses = Courses.objects.all()
         course_list = []
