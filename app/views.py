@@ -49,5 +49,3 @@ def get_user_details(request):
 def logout_user(request):
     logout(request)
     return HttpResponseRedirect('/')
-
-

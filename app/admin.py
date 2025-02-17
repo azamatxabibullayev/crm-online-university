@@ -4,7 +4,6 @@ from .models import CustomUser, AdminHOD, Staffs, Courses, Subjects, Students, A
     LeaveReportStudent, LeaveReportStaff, FeedBackStudent, FeedBackStaffs, NotificationStudent, NotificationStaffs
 
 
-# Register your models here.
 class UserModel(UserAdmin):
     pass
 

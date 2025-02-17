@@ -39,7 +39,6 @@ def admin_home(request):
         subject_list.append(subject.subject_name)
         student_count_list_in_subject.append(student_count)
 
-
     staff_attendance_present_list = []
     staff_attendance_leave_list = []
     staff_name_list = []
@@ -52,7 +51,6 @@ def admin_home(request):
         staff_attendance_present_list.append(attendance)
         staff_attendance_leave_list.append(leaves)
         staff_name_list.append(staff.admin.first_name)
-
 
     student_attendance_present_list = []
     student_attendance_leave_list = []
@@ -436,7 +434,6 @@ def edit_student_save(request):
                 user.username = username
                 user.save()
 
-
                 student_model = Students.objects.get(admin=student_id)
                 student_model.address = address
 
@@ -553,7 +550,6 @@ def edit_subject_save(request):
         except:
             messages.error(request, "Failed to Update Subject.")
             return HttpResponseRedirect(reverse("edit_subject", kwargs={"subject_id": subject_id}))
-
 
 
 def delete_subject(request, subject_id):
@@ -689,7 +685,6 @@ def admin_view_attendance(request):
 
 @csrf_exempt
 def admin_get_attendance_dates(request):
-
     subject_id = request.POST.get("subject")
     session_year = request.POST.get("session_year_id")
 
@@ -697,9 +692,7 @@ def admin_get_attendance_dates(request):
 
     session_model = SessionYearModel.objects.get(id=session_year)
 
-
     attendance = Attendance.objects.filter(subject_id=subject_model, session_year_id=session_model)
-
 
     list_data = []
 
