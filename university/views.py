@@ -6,6 +6,7 @@ from django.http import HttpResponseRedirect
 from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import send_mail
+from django.http import HttpResponse
 
 
 def home_view(request):
@@ -109,20 +110,27 @@ def is_student(user):
 
 
 def afterlogin_view(request):
+    if not request.user.is_authenticated:
+        # not logged in → send them to your login page
+        return redirect('login')
+
+    # admin?
     if is_admin(request.user):
         return redirect('admin-dashboard')
-    elif is_teacher(request.user):
-        accountapproval = models.TeacherExtra.objects.all().filter(user_id=request.user.id, status=True)
-        if accountapproval:
+
+    # teacher?
+    if is_teacher(request.user):
+        if models.TeacherExtra.objects.filter(user_id=request.user.id, status=True).exists():
             return redirect('teacher-dashboard')
-        else:
-            return render(request, 'university/teacher_wait_for_approval.html')
-    elif is_student(request.user):
-        accountapproval = models.StudentExtra.objects.all().filter(user_id=request.user.id, status=True)
-        if accountapproval:
+        return render(request, 'university/teacher_wait_for_approval.html')
+
+    # student?
+    if is_student(request.user):
+        if models.StudentExtra.objects.filter(user_id=request.user.id, status=True).exists():
             return redirect('student-dashboard')
-        else:
-            return render(request, 'university/student_wait_for_approval.html')
+        return render(request, 'university/student_wait_for_approval.html')
+
+    return HttpResponse("You don’t have permission to view this page.", status=403)
 
 
 @login_required(login_url='adminlogin')
@@ -168,7 +176,7 @@ def admin_dashboard_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_teacher_view(request):
-    return render(request, 'school/admin_teacher.html')
+    return render(request, 'university/admin_teacher.html')
 
 
 @login_required(login_url='adminlogin')
@@ -277,7 +285,7 @@ def admin_view_teacher_salary_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_student_view(request):
-    return render(request, 'school/admin_student.html')
+    return render(request, 'university/admin_student.html')
 
 
 @login_required(login_url='adminlogin')
@@ -385,7 +393,7 @@ def admin_view_student_fee_view(request):
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_attendance_view(request):
-    return render(request, 'school/admin_attendance.html')
+    return render(request, 'university/admin_attendance.html')
 
 
 @login_required(login_url='adminlogin')
