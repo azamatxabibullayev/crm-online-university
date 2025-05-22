@@ -7,6 +7,7 @@ from django.contrib.auth.decorators import login_required, user_passes_test
 from django.conf import settings
 from django.core.mail import send_mail
 from django.http import HttpResponse
+from django.contrib.auth import logout
 
 
 def home_view(request):
@@ -110,27 +111,8 @@ def is_student(user):
 
 
 def afterlogin_view(request):
-    if not request.user.is_authenticated:
-        # not logged in → send them to your login page
-        return redirect('login')
-
-    # admin?
-    if is_admin(request.user):
-        return redirect('admin-dashboard')
-
-    # teacher?
-    if is_teacher(request.user):
-        if models.TeacherExtra.objects.filter(user_id=request.user.id, status=True).exists():
-            return redirect('teacher-dashboard')
-        return render(request, 'university/teacher_wait_for_approval.html')
-
-    # student?
-    if is_student(request.user):
-        if models.StudentExtra.objects.filter(user_id=request.user.id, status=True).exists():
-            return redirect('student-dashboard')
-        return render(request, 'university/student_wait_for_approval.html')
-
-    return HttpResponse("You don’t have permission to view this page.", status=403)
+    logout(request)
+    return redirect('login')
 
 
 @login_required(login_url='adminlogin')
@@ -438,7 +420,7 @@ def admin_view_attendance_view(request, cl):
     return render(request, 'university/admin_view_attendance_ask_date.html', {'cl': cl, 'form': form})
 
 
-# fee related view by adminnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnnn(by sumit)
+
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_fee_view(request):
@@ -452,7 +434,7 @@ def admin_view_fee_view(request, cl):
     return render(request, 'university/admin_view_fee.html', {'feedetails': feedetails, 'cl': cl})
 
 
-# notice related viewsssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssssss(by sumit)
+
 @login_required(login_url='adminlogin')
 @user_passes_test(is_admin)
 def admin_notice_view(request):
@@ -545,7 +527,7 @@ def teacher_notice_view(request):
     return render(request, 'university/teacher_notice.html', {'form': form})
 
 
-# FOR STUDENT AFTER THEIR Loginnnnnnnnnnnnnnnnnnnnn(by sumit)
+
 @login_required(login_url='studentlogin')
 @user_passes_test(is_student)
 def student_dashboard_view(request):
