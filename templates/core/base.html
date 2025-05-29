@@ -1,0 +1,143 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>CRM Online University</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-light">
+<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+  <div class="container-fluid">
+    <a class="navbar-brand" href="{% url 'home' %}">Online University</a>
+    <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+      <span class="navbar-toggler-icon"></span>
+    </button>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+
+        {% if user.is_authenticated %}
+
+          <!-- Messaging -->
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'conversation_list' %}">Messages</a>
+          </li>
+
+          <!-- Role-based Navigation -->
+          {% if user.is_superuser or user.is_staff %}
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'moderate_messages' %}">Moderate Messages</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'admin_dashboard' %}">Admin Dashboard</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'view_timetable' %}">All Timetables</a>
+            </li>
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'announcement_list' %}">Announcements</a>
+            </li>
+            <!-- Grades for Admin -->
+            <li class="nav-item">
+              <a class="nav-link" href="{% url 'grade_list' %}">Grades</a>
+            </li>
+
+          {% elif user.role == 'teacher' %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="teacherDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Teacher Panel
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="teacherDropdown">
+                <li><a class="dropdown-item" href="{% url 'teacher_dashboard' %}">Dashboard</a></li>
+                <li><a class="dropdown-item" href="{% url 'create_assignment' %}">Create Assignment</a></li>
+                <li><a class="dropdown-item" href="{% url 'upload_timetable' %}">Upload Timetable</a></li>
+                <li><a class="dropdown-item" href="{% url 'view_timetable' %}">View Timetable</a></li>
+                <li><a class="dropdown-item" href="{% url 'attendance_mark' %}">Mark Attendance</a></li>
+                <li><a class="dropdown-item" href="{% url 'notice_create' %}">Post Notice</a></li>
+                <li><a class="dropdown-item" href="{% url 'announcement_list' %}">Announcements</a></li>
+                <!-- Grades for Teacher -->
+                <li><a class="dropdown-item" href="{% url 'grade_list' %}">Grades</a></li>
+              </ul>
+            </li>
+
+          {% elif user.role == 'student' %}
+            <li class="nav-item dropdown">
+              <a class="nav-link dropdown-toggle" href="#" id="studentDropdown" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+                Student Panel
+              </a>
+              <ul class="dropdown-menu" aria-labelledby="studentDropdown">
+                <li><a class="dropdown-item" href="{% url 'student_dashboard' %}">Dashboard</a></li>
+                <li><a class="dropdown-item" href="{% url 'view_timetable' %}">My Timetable</a></li>
+                <li><a class="dropdown-item" href="{% url 'assignment_list' %}">My Assignments</a></li>
+                <li><a class="dropdown-item" href="{% url 'attendance_view' %}">My Attendance</a></li>
+                <li><a class="dropdown-item" href="{% url 'leave_request' %}">Request Leave</a></li>
+                <li><a class="dropdown-item" href="{% url 'notice_list' %}">View Notices</a></li>
+                <li><a class="dropdown-item" href="{% url 'announcement_list' %}">Announcements</a></li>
+                <!-- Grades for Student -->
+                <li><a class="dropdown-item" href="{% url 'grade_list' %}">Grades</a></li>
+              </ul>
+            </li>
+          {% endif %}
+        {% endif %}
+      </ul>
+
+      <!-- Auth links -->
+      <ul class="navbar-nav">
+        {% if user.is_authenticated %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'profile' %}">My Profile</a>
+          </li>
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'logout' %}">Logout</a>
+          </li>
+        {% else %}
+          <li class="nav-item">
+            <a class="nav-link" href="{% url 'login' %}">Login</a>
+          </li>
+        {% endif %}
+      </ul>
+    </div>
+  </div>
+</nav>
+
+<!-- Page content -->
+<div class="container mt-4">
+  {% block content %}
+  {% endblock %}
+</div>
+
+<!-- Bootstrap JS -->
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+
+<!-- WebSocket Announcements -->
+<script>
+  {% if user.is_authenticated %}
+  const ws_scheme = window.location.protocol === "https:" ? "wss" : "ws";
+  const notificationSocket = new WebSocket(
+      ws_scheme + '://' + window.location.host + '/ws/notifications/'
+  );
+
+  notificationSocket.onmessage = function(e) {
+    const data = JSON.parse(e.data);
+    const alertDiv = document.createElement('div');
+    alertDiv.className = 'alert alert-info alert-dismissible fade show fixed-top m-3';
+    alertDiv.style.zIndex = 1050;
+    alertDiv.innerHTML = `<strong>New Announcement:</strong> ${data.title} <br> ${data.content}
+      <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>`;
+    document.body.appendChild(alertDiv);
+
+    setTimeout(() => {
+      alertDiv.classList.remove('show');
+      alertDiv.classList.add('hide');
+      setTimeout(() => alertDiv.remove(), 500);
+    }, 10000);
+  };
+
+  notificationSocket.onclose = function(e) {
+    console.error('Notification socket closed unexpectedly');
+  };
+  {% endif %}
+</script>
+
+</body>
+</html>

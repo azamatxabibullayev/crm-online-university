@@ -1,0 +1,38 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h2>Welcome, {{ user.username }} (Student)</h2>
+
+<h4>Notices</h4>
+<ul>
+    {% for notice in notices %}
+    <li><strong>{{ notice.title }}</strong>: {{ notice.content|truncatewords:20 }} <em>({{ notice.created_at|date:"M d,
+        Y" }})</em></li>
+    {% empty %}
+    <li>No notices</li>
+    {% endfor %}
+</ul>
+
+<h4>Your Attendance</h4>
+<table class="table">
+    <thead>
+    <tr>
+        <th>Course</th>
+        <th>Date</th>
+        <th>Status</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for att in attendance %}
+    <tr>
+        <td>{{ att.course.name }}</td>
+        <td>{{ att.date }}</td>
+        <td>{{ att.present|yesno:"Present,Absent" }}</td>
+    </tr>
+    {% empty %}
+    <tr>
+        <td colspan="3">No attendance records found.</td>
+    </tr>
+    {% endfor %}
+    </tbody>
+</table>
+{% endblock %}

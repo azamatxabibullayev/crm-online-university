@@ -1,0 +1,27 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h3>{% if course %}Edit Course{% else %}Create Course{% endif %}</h3>
+<form method="post">
+    {% csrf_token %}
+    <div class="mb-3">
+        <label>Name</label>
+        <input type="text" name="name" class="form-control" required value="{{ course.name|default:'' }}">
+    </div>
+    <div class="mb-3">
+        <label>Description</label>
+        <textarea name="description" class="form-control">{{ course.description|default:'' }}</textarea>
+    </div>
+    <div class="mb-3">
+        <label>Assign Teachers</label>
+        <select name="teachers" multiple class="form-select">
+            {% for teacher in teachers %}
+            <option value="{{ teacher.id }}" {% if teacher in course.teachers.all %}selected{% endif %}>{{ teacher.username }}
+            </option>
+            {% endfor %}
+        </select>
+    </div>
+
+    <button type="submit" class="btn btn-primary">Save</button>
+    <a href="{% url 'course_list' %}" class="btn btn-secondary">Cancel</a>
+</form>
+{% endblock %}

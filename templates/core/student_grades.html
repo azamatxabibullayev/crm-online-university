@@ -1,0 +1,21 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h3>Your Grades</h3>
+<table class="table">
+  <thead>
+    <tr><th>Course</th><th>Assignment</th><th>Grade</th><th>Graded On</th></tr>
+  </thead>
+  <tbody>
+    {% for sub in submissions %}
+      <tr>
+        <td>{{ sub.assignment.course.name }}</td>
+        <td>{{ sub.assignment.title }}</td>
+        <td>{{ sub.grade }}</td>
+        <td>{{ sub.submitted_at }}</td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="4">No graded assignments yet.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

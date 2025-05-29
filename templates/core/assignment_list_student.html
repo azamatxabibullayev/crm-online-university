@@ -1,0 +1,30 @@
+{% extends 'core/base.html' %}
+{% block content %}
+<h3>Assignments</h3>
+<table class="table">
+  <thead><tr><th>Title</th><th>Course</th><th>Deadline</th><th>Status</th><th>Action</th></tr></thead>
+  <tbody>
+    {% for assignment in assignments %}
+      <tr>
+        <td>{{ assignment.title }}</td>
+        <td>{{ assignment.course.name }}</td>
+        <td>{{ assignment.deadline }}</td>
+        <td>
+          {% if assignment.id in submitted_assignments %}
+            Submitted
+          {% else %}
+            Pending
+          {% endif %}
+        </td>
+        <td>
+          {% if assignment.id not in submitted_assignments %}
+            <a href="{% url 'submit_assignment' assignment.id %}" class="btn btn-sm btn-primary">Submit</a>
+          {% endif %}
+        </td>
+      </tr>
+    {% empty %}
+      <tr><td colspan="5">No assignments available.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+{% endblock %}

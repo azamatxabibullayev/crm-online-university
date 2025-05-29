@@ -1,0 +1,47 @@
+{% extends "core/base.html" %}
+
+{% block content %}
+<h2>Grades</h2>
+
+{% if user.role == 'teacher' %}
+  <a href="{% url 'grade_create' %}" class="btn btn-primary mb-3">Add Grade</a>
+{% endif %}
+
+<table class="table table-striped">
+  <thead>
+    <tr>
+      <th>Student</th>
+      <th>Course</th>
+      <th>Title</th>
+      <th>Score</th>
+      <th>Max Score</th>
+      <th>Graded By</th>
+      <th>Date</th>
+      {% if user.role == 'teacher' %}
+      <th>Actions</th>
+      {% endif %}
+    </tr>
+  </thead>
+  <tbody>
+    {% for grade in grades %}
+      <tr>
+        <td>{{ grade.student.username }}</td>
+        <td>{{ grade.course.name }}</td>
+        <td>{{ grade.title }}</td>
+        <td>{{ grade.score }}</td>
+        <td>{{ grade.max_score }}</td>
+        <td>{{ grade.graded_by.username }}</td>
+        <td>{{ grade.graded_at|date:"Y-m-d H:i" }}</td>
+        {% if user.role == 'teacher' %}
+        <td>
+          <a href="{% url 'grade_update' grade.pk %}" class="btn btn-sm btn-secondary">Edit</a>
+        </td>
+        {% endif %}
+      </tr>
+    {% empty %}
+      <tr><td colspan="8" class="text-center">No grades found.</td></tr>
+    {% endfor %}
+  </tbody>
+</table>
+
+{% endblock %}
