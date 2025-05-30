@@ -1,0 +1,409 @@
+<!DOCTYPE html>
+{% load static %}
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta http-equiv="X-UA-Compatible" content="IE=edge" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="referrer" content="no-referrer-when-downgrade">
+    <title>EducateLanka</title>
+    <link rel="icon" type="image/x-icon" href="{% static 'Images/favicon.png' %}">
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+      integrity="sha384-JcKb8q3iqJ61gNV9KGb8thSsNjpSL0n8PARn9HuZOnIxN0hoP+VmmDGMN5t9UJ0Z"
+      crossorigin="anonymous"
+    />
+    <link rel="stylesheet" href="{% static 'css/educatelanka_css.css' %}">
+    <style>
+      html {
+      scroll-behavior: smooth;
+    }
+
+      body::-webkit-scrollbar {
+      display: none;
+    }
+
+      #myBtn {
+      display: none;
+      position: fixed;
+      bottom: 20px;
+      right: 30px;
+      z-index: 99;
+      font-size: 18px;
+      border: none;
+      outline: none;
+      background-color: #002147;
+      color: white;
+      cursor: pointer;
+      padding: 15px;
+      border-radius: 4px;
+      transition: 1.13s;
+    }
+
+    #myBtn:hover {
+      background-color: #0bb32c;
+    }
+
+    #navigation-item{
+      color: #002147;
+      font-weight: bold;
+      font-size: 19px;
+      transition: 1.13s;
+    }
+
+    #navigation-item:hover{
+      color: #ffffff;
+    }
+
+    #navigation-item-logout{
+      color: #002147;
+      font-weight: bold;
+      font-size: 19px;
+      transition: 1.13s;
+    }
+
+    #navigation-item-logout:hover{
+      color: #d41616;
+    }
+
+    </style>
+  </head>
+  <body>
+    <header>
+      <nav class="navbar navbar-expand-lg navbar-light fixed-top scrolling-navbar" style="background: linear-gradient(to left, #0000FF, #008800, #FFFF00);">
+      <div class="container">
+          <a class="navbar-brand" href="{% url 'index' %}" style="color:#0bb32c;">
+            <img src="{% static 'Images/EducateLanka-logo.png' %}" alt="Logo 1" style="width: 100px; height: 100px;">
+            <img src="{% static 'Images/x-mark.png' %}" alt="x-mark" style="width: 20px; height: 20px;">
+             <img src="{% static 'Images/bhsk-logo.png' %}" alt="Logo 2" style="width: 100px; height: 100px;">
+          </a>
+          <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#basicExampleNav" aria-controls="basicExampleNav" aria-expanded="false" aria-label="Toggle navigation">
+              <span class="navbar-toggler-icon"></span>
+          </button>
+          <div class="collapse navbar-collapse" id="basicExampleNav">
+              <ul class="navbar-nav mr-auto smooth-scroll">
+                  
+                {% if user.is_superuser %}
+                <li class="nav-item">
+                    <a class="nav-link" href="{% url 'admin:index' %}" target="_blank" id="navigation-item">Admin</a>
+                </li>
+                {% endif %}
+                  
+                  {% if user.is_authenticated %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'user_logout' %}" id="navigation-item-logout">Logout</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'curriculum:standard_list' %}" id="navigation-item">Grades</a>
+                  </li>
+                  {% else %}
+                  <li class="nav-item">
+                      
+                      <a class="nav-link" href="{% url 'user_login' %}" id="navigation-item">You are currently using guest access (Log in)</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="{% url 'register' %}" id="navigation-item">Register</a>
+                  </li>
+                  {% endif %}
+                  <li class="nav-item">
+                      <a class="nav-link" href="#" target="_blank" id="navigation-item">My School</a>
+                  </li>
+                  <li class="nav-item">
+                      <a class="nav-link" href="#" target="_blank" id="navigation-item">Latest News</a>
+                  </li>                  
+              </ul>
+              {% if request.user.is_authenticated %}
+              <span class="navbar-text" style="color: #ffffff; font-weight: bold;"> <i>
+                Welcome to EducateLanka, <b>{{ request.user }} </i>
+              </span>
+              {% endif %}
+          </div>
+      </div>
+  </nav>
+</header>
+<div id="intro" class="container-fluid d-flex align-items-center justify-content-center h-100">
+  <div class="row d-flex justify-content-center text-center">
+    <div class="col-md-10 text-white">
+      <h2 class="display-4 font-weight-bold white-text p-5 mb-2" style="color: #ffffff;">EducateLanka x BHSK</h2>
+      <hr style="color: #000000;">
+      <h4 class="white-text my-4" style="color: #ffffff;">Welcome to Berkshire High School's dedicated Learning Management System (LMS), powered by EducateLanka&reg;</h4>
+      {% if request.user.is_authenticated %}
+      <a href="{% url 'curriculum:standard_list' %}"><button type="button" class="btn" id= "start-learn-btn" style="color: #0bb32c; border-color: #0bb32c;">Start Learning Now</button></a>
+      {% endif %}
+    </div>
+  </div>
+</div>
+<br>
+<br>
+<br>
+<section class="about-us">
+<div class="about-section">
+  <div class="inner-container">
+      <h1>About Us</h1>
+      <p class="text">
+        Our mission is to empower schools in Sri Lanka with the tools and technology they need to provide an enriching and personalized learning experience.
+        <br>
+        With EducateLanka, schools can harness the power of modern technology to create a dynamic and interactive learning environment. Our customized LMS solutions are crafted to meet the specific needs of each educational institution, ensuring seamless integration into their existing curriculum and teaching methods. We specializes in:
+      </p>
+      <div class="skills">
+          <span>Customized LMS Solutions </span>
+          <span>EdTech Integration </span>
+          <span>Educational Consultation</span>
+      </div>
+  </div>
+</div>
+</section>
+  <br>
+  <br>
+  <br>
+  
+    <section class="latest-news">
+      <div class="container py-5">
+        <div class="py-5">
+            <h3 class="text-center text-white">Upcoming Events</h3>
+       </div>
+        <div class="row row-cols-1 row-cols-md-3 g-4">
+         
+            <div class="col">
+              <div class="card h-100 p-3">
+                <img src="{% static 'Images/event.jpg' %}" class="card-img-top" alt="..." style="height: 300px;">
+                <div class="card-body">
+                    <span class="badge bg-secondary">
+                        <h5 class="mt-2">24<br>February</h5>
+                        <p></p>
+                    </span>
+                    <br>
+                  <h5 class="card-title">Science Day</h5>
+                  <p class="card-text">Berkshire High School is excited to celebrate Science Day, a special occasion dedicated to nurturing young scientific minds. On this day, our school community comes together to showcase the incredible achievements and talents of our budding scientists. Through engaging experiments, informative presentations, and interactive activities, we aim to foster a deep love and appreciation for science among our students. </p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 p-3">
+                <img src="{% static 'Images/event-1.jpg' %}" class="card-img-top" alt="..." style="height: 300px;">
+                <div class="card-body">
+                    <span class="badge bg-secondary">
+                        <h5 class="mt-2">31<br>October</h5>
+                        <p></p>
+                    </span>
+                    <br>
+                  <h5 class="card-title">Colours Eve</h5>
+                  <p class="card-text">Join us in celebrating the outstanding achievements of our talented athletes at Berkshire High School's 'Colours Eve for Sports Excellence'! This special event is dedicated to honoring the dedication and hard work of our exceptional sportswomen who have brought pride and glory to our school through their remarkable feats in various sports.</p>
+                </div>
+              </div>
+            </div>
+            <div class="col">
+              <div class="card h-100 p-3">
+                <img src="{% static 'Images/event-2.jpg' %}" class="card-img-top" alt="..." style="height: 300px;">
+                <div class="card-body">
+                    <span class="badge bg-secondary">
+                        <h5 class="mt-2">13<br>February</h5>
+                        <p></p>
+                    </span>
+                    <br>
+                  <h5 class="card-title">Interhouse Sports Meet</h5>
+                  <p class="card-text">Get ready for a day filled with spirited competition and camaraderie at Berkshire High School's Interhouse Sports Meet! This exciting event brings together our school's diverse houses in a friendly battle of athleticism and sportsmanship. Students from all houses will showcase their talent and determination as they compete in a variety of sporting events, from sprints to relays, and everything in between</p>
+                </div>
+              </div>
+            </div>
+          </div>
+       </div>
+    </section>
+    <br>
+    <br>
+    <section class="vh-100" style="background-color: #eee;">
+      <div class="container py-5 h-100">
+        <div class="row d-flex justify-content-center align-items-center h-100">
+          <div class="col col-lg-9 col-xl-7">
+            <div class="card" style="border-radius: 15px;">
+              <div class="card-body p-5">
+    
+                <div class="text-center mb-4 pb-2">
+                  <h4>Quote of the Day</h4>
+                  <img src="https://mdbcdn.b-cdn.net/img/Photos/new-templates/bootstrap-quotes/bulb.webp"
+                    alt="Bulb" width="100">
+                </div>
+    
+                <figure class="text-center mb-0">
+                  <blockquote class="blockquote">
+                    <p class="pb-3">
+                      <i class="fas fa-quote-left fa-xs text-primary"></i>
+                      <span class="lead font-italic">Many of life's failures are people who did not realize how
+                        close they were to success when they gave up.</span>
+                      <i class="fas fa-quote-right fa-xs text-primary"></i>
+                    </p>
+                  </blockquote>
+                  <figcaption class="blockquote-footer mb-0">
+                    Thomas Edison
+                  </figcaption>
+                </figure>
+    
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </section>
+
+   <br>
+   <br>
+   <button onclick="topFunction()" id="myBtn" title="Go to top"><i class="fa-solid fa-arrow-up"></i></button>
+
+  <!-- Footer -->
+  <footer
+          class="text-center text-lg-start text-white"
+          style="background-color: #002147"
+          >
+    <!-- Section: Social media -->
+    <section
+             class="d-flex justify-content-between p-4"
+             style="background-color: #0bb32c"
+             >
+      
+
+      <!-- Right -->
+      <div>
+        
+      </div>
+      <!-- Right -->
+    </section>
+    <!-- Section: Social media -->
+
+    <!-- Section: Links  -->
+    <section class="">
+      <div class="container text-center text-md-start mt-5">
+        <!-- Grid row -->
+        <div class="row mt-3">
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-4 col-xl-3 mx-auto mb-4">
+            <!-- Content -->
+            <h6 class="text-uppercase fw-bold">EducateLanka&reg;</h6>
+            <hr
+                class="mb-4 mt-0 d-inline-block mx-auto"
+                style="width: 60px; background-color: #0bb32c; height: 2px"
+                />
+            <p>
+              EducateLanka specializes in crafting tailor-made Learning Management Systems (LMS) that are uniquely designed to elevate the educational journey.
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-2 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold">Useful links</h6>
+            <hr
+                class="mb-4 mt-0 d-inline-block mx-auto"
+                style="width: 60px; background-color: #0bb32c; height: 2px"
+                />
+            <p>
+              <a href="#!" class="text-white">Developer forum</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">Report a bug</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">About EducateLanka</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">Help</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-3 col-lg-2 col-xl-2 mx-auto mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold">Social Media</h6>
+            <hr
+                class="mb-4 mt-0 d-inline-block mx-auto"
+                style="width: 60px; background-color: #0bb32c; height: 2px"
+                />
+            <p>
+              <a href="#!" class="text-white">Instagram</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">X</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">LinkedIn</a>
+            </p>
+            <p>
+              <a href="#!" class="text-white">YouTube</a>
+            </p>
+          </div>
+          <!-- Grid column -->
+
+          <!-- Grid column -->
+          <div class="col-md-4 col-lg-3 col-xl-3 mx-auto mb-md-0 mb-4">
+            <!-- Links -->
+            <h6 class="text-uppercase fw-bold">Contact</h6>
+            <hr
+                class="mb-4 mt-0 d-inline-block mx-auto"
+                style="width: 60px; background-color: #0bb32c; height: 2px"
+                />
+            <p><i class="fas fa-home mr-3"></i> No. 530, Colombo Rd, Pilimathalawa</p>
+            <p><i class="fas fa-envelope mr-3"></i> info@educatelanka.com</p>
+            <p><i class="fas fa-phone mr-3"></i> +94 70 28 98 499</p>
+            <p><i class="fas fa-print mr-3"></i> +94 70 36 11 799</p>
+          </div>
+          <!-- Grid column -->
+        </div>
+        <!-- Grid row -->
+      </div>
+    </section>
+    <!-- Section: Links  -->
+
+    <!-- Copyright -->
+    <div
+         class="text-center p-3"
+         style="background-color: rgba(0, 0, 0, 0.2)"
+         >Copyright &copy; 1999-2023, EducateLanka. All Rights
+         Reserved. <br />
+         <p>MCMXCIX</p>
+    </div>
+    <!-- Copyright -->
+  </footer>
+<!-- End of .container -->
+    <script>
+      
+      let mybutton = document.getElementById("myBtn");
+
+
+      window.onscroll = function() {scrollFunction()};
+
+      function scrollFunction() {
+      if (document.body.scrollTop > 20 || document.documentElement.scrollTop > 20) {
+        mybutton.style.display = "block";
+      } else {
+        mybutton.style.display = "none";
+      }
+      }
+
+
+      function topFunction() {
+      document.body.scrollTop = 0;
+      document.documentElement.scrollTop = 0;
+    }
+    </script>
+    <!--Start of Tawk.to Script-->
+    <script type="text/javascript">
+    var Tawk_API=Tawk_API||{}, Tawk_LoadStart=new Date();
+    (function(){
+    var s1=document.createElement("script"),s0=document.getElementsByTagName("script")[0];
+    s1.async=true;
+    s1.src='https://embed.tawk.to/64f86a46a91e863a5c11f909/1h9l5ua4u';
+    s1.charset='UTF-8';
+    s1.setAttribute('crossorigin','*');
+    s0.parentNode.insertBefore(s1,s0);
+      })();
+    </script>
+    <!--End of Tawk.to Script-->
+    <script src="https://kit.fontawesome.com/959fd8dfca.js"></script>
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js" integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/popper.js@1.16.1/dist/umd/popper.min.js" integrity="sha384-9/reFTGAW83EW2RDu2S0VKaIzap3H66lZH81PoYlFhbGU+6BZp6G7niu735Sk7lN" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js" integrity="sha384-B4gt1jrGC7Jh4AgTPSdUtOBvfO8shuf57BaghqFfPlYxofvL8/KUEfYiJOMMV+rV" crossorigin="anonymous"></script>
+    
+  </body>
+</html>
